@@ -30,28 +30,6 @@ class DecoderBlock(nn.Module):
         output: 
         same shape
         '''
-        # masked self attention
-        # sequence: same shape
-        # residual1 = sequence.clone()
-        # sequence = self.attention(sequence, sequence, sequence, key_padding_mask, causal_mask)
-        # # dropout
-        # # sequence: same shape
-        # # sequence = self.dropout1(sequence)
-        # # add & norm 1
-        # # sequence: same shape
-        # sequence = self.norm1(residual1 + sequence)
-        # # ffn
-        # # sequence: same shape
-        # residual2 = sequence.clone()
-        # sequence = self.ff1(sequence)
-        # sequence = F.relu(sequence)
-        # sequence = self.ff2(sequence)
-        # # dropout
-        # # sequence: same shape
-        # sequence = self.dropout2(sequence)
-        # # add & norm 2
-        # # sequence: same shape
-        # sequence = self.norm2(residual2 + sequence)
 
         residual1 = sequence.clone()
         sequence = self.norm1(sequence)
