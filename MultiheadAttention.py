@@ -15,8 +15,8 @@ class MultiheadAttention(nn.Module):
         self.w_v = nn.Linear(embed_dim, embed_dim)
         self.w_out = nn.Linear(embed_dim, embed_dim)
 
-        self.dropout1 = nn.Dropout(dropout_rate)                                                                                   # NEW HERE
-        self.dropout2 = nn.Dropout(dropout_rate)                                                                                                               # NEW HERE
+        self.dropout1 = nn.Dropout(dropout_rate)                                                                               
+        self.dropout2 = nn.Dropout(dropout_rate)                                                                                                         
 
         self.last_attention = None
 
@@ -66,23 +66,21 @@ class MultiheadAttention(nn.Module):
         # softmax
         attention = torch.softmax(attention, dim=-1)
 
-        attention = self.dropout1(attention)                                               # NEW HERE
+        attention = self.dropout1(attention)                                             
 
         # save attention matrix
-        self.last_attention = attention.clone().detach() # may not need clone
+        self.last_attention = attention.clone().detach()
         # matmul attention, v
         attention = torch.matmul(attention, v)
 
         # concat heads
         # batch_size, seq_length, embed_dim
-        # switch seq_length, num_heads for concat
         attention = attention.transpose(1, 2)
-        # concat d_qkv along num_heads to embed_dim
         attention = attention.contiguous().view(self.batch_size, -1, self.embed_dim)
 
         # linear out
         attention = self.w_out(attention)
 
-        attention = self.dropout2(attention)                                                                                                              # NEW HERE
+        attention = self.dropout2(attention)                                                                                                       
         
         return attention
