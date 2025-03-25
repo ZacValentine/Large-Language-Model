@@ -23,13 +23,12 @@ model, start_step, losses = load_model_from_checkpoint(config["model_folder"] + 
 train_df = pd.read_csv(config["dataset_path"],lineterminator='\n')
 num_steps = train_df.shape[0]
 criterion = nn.CrossEntropyLoss()
-# criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
+
 for name, param in model.named_parameters():
-# embedding.weight positional_encoding.weight
-    if 'attention' not in name:  # Freeze everything except attention
+    if 'attention' not in name: 
         param.requires_grad = False
-optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=config["fine_tune_lr"], weight_decay=config["weight_decay"]) # weight decay is L2 reg
-# best_loss_interval = 10 //<- how many regular intervals between this interval
+optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=config["fine_tune_lr"], weight_decay=config["weight_decay"])
+
 model.train()
 
 for epoch in range(config["num_epochs"]):
@@ -41,11 +40,6 @@ for epoch in range(config["num_epochs"]):
         logits, probs = model(sequence[:, :-1], key_padding_mask = None, causal_mask = causal_mask)
 
         loss = criterion(logits.view(-1, vocab_size), sequence[:, 1:].view(-1))
-
-        # attention_matrix = model.decoder.blocks[0].attention.last_attention
-        # for i in range(1, 6):
-        #     attention_matrix = torch.cat((attention_matrix, model.decoder.blocks[i].attention.last_attention))
-        # loss += entropy_loss(attention_matrix, config["entropy_weight"])
 
         loss.backward()
         optimizer.step()
