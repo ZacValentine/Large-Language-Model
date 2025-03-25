@@ -55,9 +55,7 @@ def get_preprocessed_sequence_pd_csv(step, train_df, tokenizer, device):
 
 def visualize_attention_matrix(attention_matrix, sequence, tokenizer):
     sequence = sequence.squeeze(0)
-    # attention_matrix = attention_matrix.squeeze(0)
-    attention_matrix = np.mean(np.array(attention_matrix.cpu().detach().numpy()), axis=(0, 1))# average over heads within each layer
-    # attention_matrix = np.clip((attention_matrix - attention_matrix.min()) / (attention_matrix.max() - attention_matrix.min()), 0, 1)
+    attention_matrix = np.mean(np.array(attention_matrix.cpu().detach().numpy()), axis=(0, 1)
 
     fig, ax = plt.subplots()
     im = ax.imshow(attention_matrix, cmap='viridis')
@@ -89,25 +87,3 @@ def entropy_loss(attention_matrix, entropy_weight):
     attention_entropy = -torch.sum(attention_matrix * torch.log(attention_matrix + 1e-12), dim=-1)
     entropy_loss = entropy_weight * torch.mean(attention_entropy)
     return entropy_loss
-
-# if it aint broke dont fix it, no need for schedular yet(currently am only fixing things, not optimizing)
-
-# add dropout, hopefully this fixes attention collapse <- didnt fix, added - add to attention
-# label smoothing <- easy, unadded
-# entropy based regularization <- hard, unadded
-# weight_decay/L2 reg <- easy, added
-
-# ^these are the top 4 attention collapse prevention measures, if they don't work, do more research
-# fix these issues, then do another overnight training
-
-# now using different model(from minGPT)
-# more dropout in attention
-# positional encoding is now embedding table
-# yes L2 reg, no entropy reg, no label smoothing
-
-
-# batches
-# fine tune: lower lr, freeze non-attention parameters
-
-# check andrej karpathy's minigpt and compare
-
